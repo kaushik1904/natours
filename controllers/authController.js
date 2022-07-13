@@ -56,12 +56,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1.getting token and check of it's there
   let token;
   if (
-    req.headers.authorication &&
-    req.headers.authorication.startsWith('Bearer')
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
   ) {
-    token = req.headers.authorication.split(' ')[1];
+    token = req.headers.authorization.split(' ')[1];
   }
-  // console.log(token);
+  console.log(token);
 
   if (!token) {
     return next(
@@ -77,10 +77,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   const freshUser = await User.findById(decoded.id);
 
   if (!freshUser) {
-    return next(new AppError(
-      'The user belonging to this token does no longer exist',
-      401
-    ));
+    return next(
+      new AppError('The user belonging to this token does no longer exist', 401)
+    );
   }
   // 4.check if user changed password after the token was issued
   if (freshUser.changePasswordAfter(decoded.iat)) {
